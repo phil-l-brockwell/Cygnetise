@@ -1,0 +1,9 @@
+<h1><%= @campaign.title %></h1>
+
+<h2>Candidates</h2>
+<ul class='campaign-list'>
+  <% @campaign.valid_votes_grouped_by_choice_with_counts.each do |candidate, count| %>
+    <li class='candidate'><span><%= candidate %>:</span> <%= count %> votes</li>
+  <% end %>
+  <li class='not-counted'><span>Not Counted:</span> <%= @campaign.votes.invalid.count %></li>
+</ul>

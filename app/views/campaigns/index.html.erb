@@ -1,0 +1,7 @@
+<h1>Campaigns</h1>
+
+<div class='campaign-links'>
+  <% @campaigns.each do |campaign| %>
+    <%= link_to campaign.title, campaign %>
+  <% end %>
+</div>
