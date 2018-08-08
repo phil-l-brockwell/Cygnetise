@@ -1,0 +1,45 @@
+// Place all the styles related to the Campaigns controller here.
+// They will automatically be included in application.css.
+// You can use Sass (SCSS) here: http://sass-lang.com/
+
+div.campaign-links {
+	list-style: none;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 100vh;
+  margin: 0 auto;
+
+  a {
+    text-align: center;
+    height: 150px;
+    line-height: 150px;
+    background-color: darkblue;
+    color: white;
+    text-decoration: none;
+    font-size: 30px;
+    margin: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+}
+
+ul.campaign-list {
+	margin: 0 auto;
+  width: 50%;
+  text-align: center;
+  list-style: none;
+
+  li {
+  	height: 30px;
+  	line-height: 30px;
+
+  	&.not-counted {
+  		color: red;
+  	}
+
+  	span {
+  		font-weight: 900;
+  	}
+  }
+}
