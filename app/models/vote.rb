@@ -5,4 +5,7 @@ class Vote < ApplicationRecord
 
   belongs_to :campaign
   validates :validity, inclusion: { in: VALIDITY_OPTIONS }
+
+  scope :valid, -> { where(validity: :during) }
+  scope :invalid, -> { where.not(validity: :during) }
 end
