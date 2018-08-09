@@ -8,34 +8,35 @@ namespace :setup do
     file_path = Rails.root.join args[:filename]
     votes = File.new(file_path).to_a
 
+    campaigns = Campaign.all.each_with_object({}) { |campaign, object| object[campaign.title] = campaign.id }
     import_count = 0
 
-    corrupt_data = votes.each_with_object([]) do |data, array|
-      data = fix_encoding(data) unless data.valid_encoding?
+    corrupt_data = Campaign.transaction do
+      votes.each_with_object([]) do |data, array|
+        data = fix_encoding(data) unless data.valid_encoding?
 
-      fields = data.split(' ')
-      campaign_title = fields[2].split(':').last
-      validity = fields[3].split(':').last
-      choice = fields[4].split(':').last
+        fields = data.split(' ')
+        campaign_title = fields[2].split(':').last
+        validity = fields[3].split(':').last
+        choice = fields[4].split(':').last
 
-      # discard if we have no campaign details
-      if campaign_title.nil? || campaign_title.empty?
-        array << data
-        next
+        # discard if we have no campaign details
+        if campaign_title.nil? || campaign_title.empty?
+          array << data
+          next
+        end
+
+        campaign_id = campaigns[campaign_title] ||= Campaign.create(title: campaign_title).id
+        vote = Vote.new(campaign_id: campaign_id, choice: choice, validity: validity)
+
+        unless vote.valid?
+          array << data
+          next
+        end
+
+        vote.save
+        import_count += 1
       end
-
-      campaign = Campaign.find_or_create_by(title: campaign_title)
-      vote = Vote.new(campaign_id: campaign.id, choice: choice, validity: validity)
-
-      # discard if we dont have the appropriate data
-      unless vote.valid?
-        array << data
-        next
-      end
-
-      vote.save
-      import_count += 1
-      puts "Created vote with id: #{vote.id}, campaign: #{campaign_title}, validity: #{validity}, choice: #{choice}"
     end
 
     puts "#{import_count} votes successfully imported"
